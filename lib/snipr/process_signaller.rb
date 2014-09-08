@@ -12,6 +12,7 @@ module Snipr
   #   signaller.exclude       /scheduler/
   #   signaller.signal        "USR1"
   #   signaller.target_parent false
+  #   singaller.dry_run
   #
   #   signaller.on_no_processes do
   #     puts "No processes"
@@ -50,7 +51,8 @@ module Snipr
     end
 
     ##
-    # Send the specified signal to all located processes
+    # Send the specified signal to all located processes, invoking
+    # callbacks as appropriate.
     def send_signals
       processes = @locator.locate
 
@@ -65,6 +67,11 @@ module Snipr
       @on_error.call(e)
     end
 
+    ##
+    # Specify the signal to send to the targetted processes.  This should
+    # be a string that maps one of the values listed here:
+    #
+    # http://ruby-doc.org/core-1.8.7/Signal.html#method-c-list
     def signal(signal)
       @signal = Signal.list[signal.to_s.upcase].tap do |sig|
         unless sig
@@ -73,30 +80,54 @@ module Snipr
       end
     end
 
+    ##
+    # Specify or access the locator collaborator that is responsible for
+    # collecting the processes to operate on
     def locator(locator=nil)
       @locator ||= (locator || ProcessLocator.new)
     end
 
+    ##
+    # Callback invoked when no processes are found
     def on_no_processes(&callback)
       @on_no_processes = callback
     end
 
+    ##
+    # Callback invoked immediately before sending a signal to a process.
+    # Will send both the signal and the KernelProcess object as returned
+    # by the locator.
     def before_signal(&callback)
       @before_signal = callback
     end
 
+    ##
+    # Callback invoked immediately after sending a signal to a process.
+    # Will send both the signal and the KernelProcess object as returned
+    # by the locator.
     def after_signal(&callback)
       @after_signal = callback
     end
 
+    ##
+    # Callback invoked if an error is encountered.  If this is within
+    # the context of attempting to send a signal to a process, then
+    # the exception, signal and KernelProcess object are sent.  Otherwise,
+    # only the exception is sent.
     def on_error(&callback)
       @on_error = callback
     end
 
+    ##
+    # Set to true if the signal should be sent to the parent of any
+    # located processes.  Defaults to false.
     def target_parent(flag=false)
       @target_parent = flag
     end
 
+    ##
+    # Invoke if you want to have callbacks invoked, but not actually
+    # send signals to located processes.
     def dry_run
       @dry_run = true
     end
