@@ -97,13 +97,19 @@ module Snipr
       @target_parent = flag
     end
 
+    def dry_run
+      @dry_run = true
+    end
+
     private
     def signal_process(process)
       @before_signal.call(@signal, process)
-      if @target_parent
-        Process.kill(@signal, process.ppid)
-      else
-        Process.kill(@signal, process.pid)
+      unless @dry_run
+        if @target_parent
+          Process.kill(@signal, process.ppid)
+        else
+          Process.kill(@signal, process.pid)
+        end
       end
       @after_signal.call(@signal, process)
     rescue StandardError => e

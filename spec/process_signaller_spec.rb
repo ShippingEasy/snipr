@@ -76,7 +76,7 @@ module Snipr
             expect(checkins.after_signal).to eq("#{signal} > 6337")
           end
         end
-        
+
         context "targetting the parent process" do
           it "should send the appropriate signal to the parent process and call callbacks" do
             subject.target_parent true
@@ -92,6 +92,16 @@ module Snipr
             expect(Process).to receive(:kill).with(signal, 6337).and_raise('Ouch!')
             subject.send_signals
             expect(checkins.on_error).to eq("Ouch! #{signal} > 6337")
+          end
+        end
+
+        context "when doing a dry run" do
+          it "should not send any signals to the process or its parent" do
+            expect(Process).to_not receive(:kill)
+            subject.dry_run
+            subject.send_signals
+            expect(checkins.before_signal).to eq("#{signal} > 6337")
+            expect(checkins.after_signal).to eq("#{signal} > 6337")
           end
         end
       end

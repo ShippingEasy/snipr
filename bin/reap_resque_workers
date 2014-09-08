@@ -39,6 +39,11 @@ parser = OptionParser.new do |config|
   config.on("-s", "--signal [SIGNAL]", desc) do |signal|
     options.signal = signal
   end
+
+  desc = "Perform a dry run which will identify workers to be reaped but not send any signals"
+  config.on("-d", "--dry-run", desc) do
+    options.no_signals = true
+  end
 end.parse!
 
 # TODO remove me
@@ -52,12 +57,15 @@ unless options.bytes || options.keys || options.alive
   Kernel.exit(-1)
 end
 
+output.info("*** DRY RUN ***") if options.no_signals
+
 signaller = Snipr::ProcessSignaller.new do |signaller|
   signaller.signal          options.signal
   signaller.target_parent   true
   signaller.include         /resque/
   signaller.include         /processing/i
   signaller.exclude         /scheduler/i
+  signaller.dry_run if options.no_signals
 
   if options.bytes
     signaller.memory_greater_than(options.bytes)
