@@ -1,6 +1,7 @@
 require 'open3'
 
-require "snipr/version"
+require 'snipr/version'
+require 'snipr/output'
 require 'snipr/process_locator'
 require 'snipr/process_signaller'
 

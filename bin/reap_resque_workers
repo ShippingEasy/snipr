@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+require 'ostruct'
+require 'optparse'
+
+options = OpenStruct.new({
+  :signal => 'USR1'
+})
+
+parser = OptionParser.new do |config|
+  config.banner = "Usage: reap_resque_workers [options]"
+  config.separator ""
+  config.separator "Can be used to reap runaway resque workers " +
+                   "that have exceeded too much memory use, " +
+                   "CPU use, or time alive."
+  config.separator "By default, this sends USR1 to the parent worker " +
+                   "process, which causes it to immediately kill " +
+                   "the runaway"
+  config.separator "child.  The parent will then spawn another child to " +
+                   "continue work."
+  config.separator ""
+  config.separator "Options:"
+
+  desc = "Workers using more than some bytes size of memory"
+  config.on("-m", "--memory [BYTES]", desc) do |bytes|
+    options.bytes = bytes.to_i
+  end
+
+  desc = "workers using more than a percentage of CPU"
+  config.on("-c", "--cpu [PERCENTAGE]", desc) do |cpu|
+    options.cpu = cpu.to_f
+  end
+
+  desc = "Workers that have been alive for some length of time in seconds"
+  config.on("-a", "--alive [SECONDS]", desc) do |sec|
+    options.alive = sec.to_i
+  end
+
+  desc = "Signal to send to the worker's parent.  Defaults to USR1."
+  config.on("-s", "--signal [SIGNAL]", desc) do |signal|
+    options.signal = signal
+  end
+end.parse!
+
+# TODO remove me
+$: << 'lib'
+
+require 'snipr'
+output = Snipr::Output.new
+
+if options.to_h.empty?
+  output.err("error - You must specify at least one of -m, -c or -a")
+  Kernel.exit(-1)
+end
+
+signaller = Snipr::ProcessSignaller.new do |signaller|
+  signaller.signal          options.signal
+  signaller.target_parent   true
+  signaller.include         /resque/
+  signaller.include         /processing/i
+  signaller.exclude         /scheduler/i
+
+  if options.bytes
+    signaller.memory_greater_than(options.bytes)
+  end
+
+  if options.cpu
+    signaller.cpu_greater_than(options.cpu)
+  end
+
+  if options.alive
+    signaller.alive_longer_than(options.alive)
+  end
+
+  signaller.on_no_processes do
+    output.info("no runaways found")
+  end
+
+  signaller.after_signal do |signal, process|
+    output.info("sent #{signal} to #{process.ppid} to gracefully shutdown #{process.pid}")
+  end
+
+  signaller.on_error do |error, signal, process|
+    raise error
+    if signal && process
+      output.err("error sending #{signal} to #{process.ppid} to gracefully shutdown #{process.pid}: #{error}")
+    else
+      output.err("error: #{error}")
+      Kernel.exit(-1)
+    end
+  end
+end
+
+signaller.send_signals
