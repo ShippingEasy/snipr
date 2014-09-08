@@ -1,0 +1,53 @@
+ 3552  4354 1297860 8.7 1-07:12:08 resque-1.24.1: Processing foo since 1410077129 [FooJob]
+ 4236     1 1169412 0.0 3-12:52:29 resque-1.24.1: Waiting for bar,bar
+ 4238     1 1191864 0.0 3-12:52:29 resque-1.24.1: Waiting for foo,bar
+ 4241     1 1192064 0.0 3-12:52:29 resque-1.24.1: Waiting for foo,bar
+ 4245     1 1184716 0.2 3-12:52:29 resque-1.24.1: Forked 28309 at 1410084369
+ 4248     1 1206600 0.3 3-12:52:29 resque-1.24.1: Forked 28778 at 1410189413
+ 4250     1 1198872 0.2 3-12:52:29 resque-1.24.1: Forked 32153 at 1410189457
+ 4253     1 1202312 0.3 3-12:52:29 resque-1.24.1: Forked 31818 at 1410189453
+ 4257     1 1194072 0.4 3-12:52:29 resque-1.24.1: Forked 17477 at 1410188882
+ 4259     1 1188480 0.0 3-12:52:29 resque-1.24.1: Waiting for foo,bar
+ 4263     1 1188872 0.0 3-12:52:29 resque-1.24.1: Waiting for foo,bar
+ 4265     1 1189032 0.0 3-12:52:29 resque-1.24.1: Waiting for foo,bar
+ 4269     1 1182676 0.1 3-12:52:29 resque-1.24.1: Forked 29640 at 1410189424
+ 4271     1 1195432 0.2 3-12:52:29 resque-1.24.1: Forked 32035 at 1410189455
+ 4274     1 1181816 0.1 3-12:52:29 resque-1.24.1: Forked 31915 at 1410189454
+ 4277     1 1188152 0.1 3-12:52:28 resque-1.24.1: Forked 32038 at 1410189455
+ 4280     1 1179444 0.1 3-12:52:28 resque-1.24.1: Forked 30789 at 1410185297
+ 4284     1 1169100 0.0 3-12:52:28 resque-1.24.1: Waiting for baz
+ 4293     1 1183856 0.0 3-12:52:28 resque-1.24.1: Waiting for baz
+ 4301     1 1170028 0.0 3-12:52:28 resque-1.24.1: Waiting for baz
+ 4309     1 1155112 0.0 3-12:52:28 resque-1.24.1: Waiting for baz
+ 4316     1 1188900 0.0 3-12:52:28 resque-1.24.1: Waiting for baz
+ 4321     1 1196844 0.3 3-12:52:28 resque-1.24.1: Forked 7229 at 1410131675
+ 4324     1 1157052 0.3 3-12:52:28 resque-1.24.1: Forked 28474 at 1410189411
+ 4326     1 1179852 0.1 3-12:52:28 resque-1.24.1: Forked 27462 at 1410189396
+ 4337     1 1202044 0.3 3-12:52:28 resque-1.24.1: Forked 32178 at 1410189457
+ 4340     1 1202976 0.3 3-12:52:27 resque-1.24.1: Forked 31662 at 1410189012
+ 4347     1 1163824 0.4 3-12:52:27 resque-1.24.1: Forked 6337 at 1410189132
+ 4351     1 1163120 0.2 3-12:52:27 resque-1.24.1: Forked 22400 at 1410189331
+ 4354     1 1196480 0.2 3-12:52:27 resque-1.24.1: Forked 3552 at 1410077129
+ 4357     1 1163572 0.3 3-12:52:27 resque-1.24.1: Forked 8356 at 1410189171
+ 4361     1 1187620 0.0 3-12:52:27 resque-1.24.1: Waiting for foo
+ 4364     1 1169364 0.0 3-12:52:27 resque-1.24.1: Waiting for bar
+ 5585     1 972188 0.0  3-12:50:57 resque-scheduler-2.0.1: Processing Delayed Items                       
+ 6337  4347 1293004 99.9      05:26 resque-1.24.1: Processing foo since 1410189132 [FooJob]
+ 7229  4321 1292692 8.2   16:03:03 resque-1.24.1: Processing foo since 1410131675 [FooJob]
+ 8356  4357 1220988 19.0     04:47 resque-1.24.1: Processing foo since 1410189171 [FooJob]
+17477  4257 1194072 0.0      09:35 resque-1.24.1: Processing foo since 1410188882 [FooJob]
+22400  4351 1219712 3.3      02:06 resque-1.24.1: Processing foo since 1410189331 [FooJob]
+27462  4326 1194624 2.1      01:02 resque-1.24.1: Processing foo since 1410189396 [FooJob]
+28309  4245 1278328 7.1 364-05:11:28 resque-1.24.1: Processing foo since 1410084369 [FooJob]
+28474  4324 1182012 6.7      00:47 resque-1.24.1: Processing foo since 1410189410 [FooJob]
+28778  4248 1205572 4.9      00:45 resque-1.24.1: Processing foo since 1410189413 [FooJob]
+29640  4269 1189152 3.2      00:34 resque-1.24.1: Processing foo since 1410189424 [FooJob]
+30789  4280 1263476 6.7   01:09:21 resque-1.24.1: Processing foo since 1410185297 [FooJob]
+31662  4340 1286344 2.7      07:26 resque-1.24.1: Processing foo since 1410189012 [FooJob]
+31818  4253 1202312 4.6      00:05 resque-1.24.1: Processing foo since 1410189452 [FooJob]
+31915  4274 1181816 13.2     00:04 resque-1.24.1: Processing foo since 1410189454 [FooJob]
+32035  4271 1195432 13.5     00:02 resque-1.24.1: Processing foo since 1410189455 [FooJob]
+32038  4277 1188152 13.0     00:02 resque-1.24.1: Processing foo since 1410189455 [FooJob]
+32153  4250 1198872 21.0     00:01 resque-1.24.1: Processing foo since 1410189457 [FooJob]
+32178  4337 1001202048 0.0      00:00 resque-1.24.1: Processing bar since 1410189457 [BarJob]
+32189 28509   276  0.0       00:00 grep resque
