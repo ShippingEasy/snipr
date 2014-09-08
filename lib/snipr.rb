@@ -15,11 +15,10 @@ module Snipr
   # an array of lines.  Raises an ExecError if the
   # command did not execute cleanly.
   def self.exec_cmd(command)
-    stdout, stderr, status = Open3.capture3(command)
-    if status == 0
-      stdout.split("\n")
-    else
-      raise ExecError, "#{status} #{stderr}"
+    Open3.popen3(command) do |stdin, stdout, stderr|
+      err = stderr.read
+      raise ExecError, err unless err.empty?
+      stdout.read.split("\n")
     end
   end
 end

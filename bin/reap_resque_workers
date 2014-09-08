@@ -47,7 +47,7 @@ $: << 'lib'
 require 'snipr'
 output = Snipr::Output.new
 
-if options.to_h.empty?
+unless options.bytes || options.keys || options.alive
   output.err("error - You must specify at least one of -m, -c or -a")
   Kernel.exit(-1)
 end
@@ -76,7 +76,13 @@ signaller = Snipr::ProcessSignaller.new do |signaller|
   end
 
   signaller.after_signal do |signal, process|
-    output.info("sent #{signal} to #{process.ppid} to gracefully shutdown #{process.pid}")
+    msg = "sent #{signal} to worker #{process.ppid} to gracefully shutdown " +
+          "child #{process.pid}"
+    output.info(msg)
+
+    msg = "memory:#{process.memory} cpu:#{process.cpu} time_alive: " +
+          "#{process.seconds_alive} command: #{process.command}"
+    output.info(msg)
   end
 
   signaller.on_error do |error, signal, process|
