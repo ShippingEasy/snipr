@@ -2,6 +2,7 @@ require 'open3'
 
 require "snipr/version"
 require 'snipr/process_locator'
+require 'snipr/process_signaller'
 
 module Snipr
   ##
