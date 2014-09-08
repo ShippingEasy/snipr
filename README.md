@@ -1,6 +1,6 @@
 # Snipr
 
-TODO: Write a gem description
+Tool to manage runaway processes.  More to be written later.
 
 ## Installation
 
@@ -20,7 +20,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+#### Culling Runaway Resque Workers
+```
+Usage: reap_resque_workers [options]
+
+Can be used to reap runaway resque workers that have exceeded too much memory use, CPU use, or time alive.
+By default, this sends USR1 to the parent worker process, which causes it to immediately kill the runaway
+child.  The parent will then spawn another child to continue work.
+
+Options:
+    -m, --memory [BYTES]             Workers using more than some bytes size of memory
+    -c, --cpu [PERCENTAGE]           workers using more than a percentage of CPU
+    -a, --alive [SECONDS]            Workers that have been alive for some length of time in seconds
+    -s, --signal [SIGNAL]            Signal to send to the worker's parent.  Defaults to USR1.
+```
 
 ## Contributing
 
