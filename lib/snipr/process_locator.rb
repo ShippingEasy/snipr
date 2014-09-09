@@ -14,7 +14,6 @@ module Snipr
     MINUTE_SECONDS = 60
 
 
-    attr_accessor :signal
     attr_reader :includes, :excludes, :filters
 
     def initialize
@@ -99,7 +98,7 @@ module Snipr
     end
 
     def all_processes
-      Snipr.exec_cmd('ps h -eo pid,ppid,size,%cpu,etime,cmd').map do |line|
+      Snipr.exec_cmd('ps h -eo pid,ppid,%mem,%cpu,etime,command').map do |line|
         pid, ppid, mem, cpu, etime, *cmd = line.split
         cmd = cmd.join(" ")
 
