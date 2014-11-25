@@ -22,7 +22,7 @@ Or install it yourself as:
 
 #### Culling Runaway Resque Workers
 ```
-Usage: reap_resque_workers [options]
+Usage: snipe [options]
 
 Can be used to reap runaway resque workers that have exceeded too much memory
 use, CPU use, or time alive.  By default, this sends USR1 to the parent worker
@@ -30,23 +30,32 @@ process, which causes it to immediately kill the runaway child.  The parent
 will then spawn another child to continue work.
 
 Options:
-    -m, --memory [BYTES]             Workers using more than some bytes size of
-                                     memory
-    -c, --cpu [PERCENTAGE]           workers using more than a percentage of CPU
-    -a, --alive [SECONDS]            Workers that have been alive for some
+    -i, --include [PATTERN]          Pattern that must be matched for a process
+                                     to be included
+    -e, --exclude [PATTERN]          Pattern hat must NOT be matched for a
+                                     process to be included
+    -m, --memory [BYTES]             Processes using more than some bytes size
+                                     of memory
+    -c, --cpu [PERCENTAGE]           Processes using more than a percentage of
+                                     CPU
+    -a, --alive [SECONDS]            Processes that have been alive for some
                                      length of time in seconds
-    -s, --signal [SIGNAL]            Signal to send to the worker's parent.
-                                     Defaults to USR1.
+    -s, --signal [SIGNAL]            Signal to send to the targetted process or
+                                     its parent.  Defaults to KILL.
     -d, --dry-run                    Perform a dry run which will identify
-                                     workers to be reaped but not send any
-                                     signals
+                                     processes to be targetted but does not send
+                                     any signals
+```
+
+Here is an example of a command that we use at ShippingEasy to reap runaway
+resque workers that have been running for longer than 24 hours:
+
+```
+snipe -i resque -i processing -e scheduler -a 86400
 ```
 
 #### TODO
 * Better readme docs
-* General purpose command that lets you specify process filter options & signal
-  to send to arbitrary processes
-* A command that targets bloated unicorn workers
 
 ## Contributing
 
