@@ -132,14 +132,23 @@ module Snipr
       @dry_run = true
     end
 
+    ##
+    # Ensure that the parent PID is still accurate
+    def ppid_matches?(process)
+      # PPID is the 4th item under /proc/pid/stat (whitespace-delimited)
+      Integer(process.ppid) == Integer(File.read("/proc/#{process.pid}/stat").split[3])
+    end
+
     private
     def signal_process(process)
       @before_signal.call(@signal, process)
       unless @dry_run
         if @target_parent
-          Process.kill(@signal, process.ppid)
+          Process.kill(@signal, process.ppid) if ppid_matches?(process)
         else
-          Process.kill(@signal, process.pid)
+          # Use pkill to ensure that the process we are attempting to kill matches what we know about it
+          raise "pkill was not found or is not executable" unless File.executable?("/bin/pkill")
+          system("/bin/pkill --signal #{@signal} -P #{process.ppid} -f \"^#{process.command}\"")
         end
       end
       @after_signal.call(@signal, process)
