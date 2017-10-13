@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'ostruct'
 require 'optparse'
 
@@ -59,6 +59,11 @@ parser = OptionParser.new do |config|
   config.on("-d", "--dry-run", desc) do
     options.no_signals = true
   end
+
+  desc = "Use the pkill utility to send the signal (targetted process only)"
+  config.on("--pkill", desc) do
+    options.pkill = true
+  end
 end.parse!
 
 # TODO remove me
@@ -88,6 +93,7 @@ signaller = Snipr::ProcessSignaller.new do |signaller|
   end
   signaller.signal          options.signal
   signaller.target_parent   options.target_parent
+  signaller.pkill if options.pkill
   signaller.dry_run if options.no_signals
 
   if options.bytes

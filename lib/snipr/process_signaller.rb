@@ -133,10 +133,36 @@ module Snipr
     end
 
     ##
-    # Ensure that the parent PID is still accurate
+    # Use pkill to ensure that the process we are attempting to signal
+    # matches what we know about it. This only works for the
+    # targetted process, not the parent.
+    def pkill
+      @pkill = which("pkill")
+      raise "pkill not found in path or is not executable!" unless @pkill
+    end
+
+    # Determine if a command exists in our PATH
+    def which(cmd)
+      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+        location = File.join(path, cmd)
+        return location if File.executable?(location)
+      end
+      return nil
+    end
+
+    ##
+    # Ensure that the PID we are attempting to kill still matches what we expect
+    # This is not used when pkill option is set
+    def cmd_matches?(process)
+       process.command == Snipr.exec_cmd("ps -p #{process.pid} -o 'command='").first.strip
+    end
+
     def ppid_matches?(process)
-      # PPID is the 4th item under /proc/pid/stat (whitespace-delimited)
-      Integer(process.ppid) == Integer(File.read("/proc/#{process.pid}/stat").split[3])
+      Integer(process.ppid) == Integer(Snipr.exec_cmd("ps -p #{process.pid} -o 'ppid='").first.strip)
+    end
+
+    def process_matches?(process)
+      cmd_matches?(process) && ppid_matches?(process)
     end
 
     private
@@ -144,11 +170,13 @@ module Snipr
       @before_signal.call(@signal, process)
       unless @dry_run
         if @target_parent
-          Process.kill(@signal, process.ppid) if ppid_matches?(process)
+          Process.kill(@signal, process.ppid) if process_matches?(process)
         else
-          # Use pkill to ensure that the process we are attempting to kill matches what we know about it
-          raise "pkill was not found or is not executable" unless File.executable?("/bin/pkill")
-          system("/bin/pkill --signal #{@signal} -P #{process.ppid} -f \"^#{process.command}\"")
+          if @pkill
+            system("#{@pkill} --signal #{@signal} -P #{process.ppid} -f \"^#{Regexp.escape(process.command)}\"")
+          else
+            Process.kill(@signal, process.pid) if process_matches?(process)
+          end
         end
       end
       @after_signal.call(@signal, process)
